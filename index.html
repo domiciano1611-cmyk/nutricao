@@ -1,1 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Nutrition | Future Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --glass: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Efeito de luzes flutuantes no fundo */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(120px);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        /* CONTAINER PRINCIPAL (GLASS) */
+        .glass-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* FORMULÁRIO */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            margin-left: 4px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* BOTÃO FUTURISTA */
+        button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            border: none;
+            border-radius: 12px;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+            filter: brightness(1.1);
+        }
+
+        button:active { transform: translateY(0); }
+
+        /* RESULTADO */
+        #result-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        .ai-response {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .ai-response h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Custom Scrollbar para Chrome/Safari */
+        #result-area::-webkit-scrollbar { width: 5px; }
+        #result-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .loading {
+            text-align: center;
+            color: var(--primary);
+            font-style: italic;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-container">
+        <h1>AI Nutrition</h1>
+        <p class="subtitle">Seu plano de emagrecimento inteligente</p>
+
+        <div id="form-content">
+            <div class="form-group">
+                <label>Nome do Paciente</label>
+                <input type="text" id="nome" placeholder="Ex: Alex Santana">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Idade</label>
+                    <input type="number" id="idade" placeholder="25">
+                </div>
+                <div class="form-group">
+                    <label>Gênero</label>
+                    <select id="genero">
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Peso Atual (kg)</label>
+                    <input type="number" id="peso" placeholder="85">
+                </div>
+                <div class="form-group">
+                    <label>Peso Desejado (kg)</label>
+                    <input type="number" id="meta" placeholder="75">
+                </div>
+            </div>
+
+            <button onclick="generatePlan()">Gerar Consultoria IA</button>
+        </div>
+
+        <div id="result-area">
+            </div>
+    </div>
+
+    <script>
+        const API_KEY = "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";
+        let currentLevel = 1; // Variável mantida conforme solicitado
+
+        async function generatePlan() {
+            // Captura de valores
+            const dados = {
+                nome: document.getElementById('nome').value,
+                idade: document.getElementById('idade').value,
+                genero: document.getElementById('genero').value,
+                peso: document.getElementById('peso').value,
+                meta: document.getElementById('meta').value
+            };
+
+            // Validação simples
+            if (!dados.nome || !dados.peso || !dados.meta) {
+                alert("Por favor, preencha as informações básicas para o cálculo.");
+                return;
+            }
+
+            const resultArea = document.getElementById('result-area');
+            resultArea.style.display = "block";
+            resultArea.innerHTML = '<div class="loading">Processando algoritmos nutricionais...</div>';
+
+            // Construção do Prompt
+            const prompt = `Atue como um nutricionista expert. Crie um plano de nutrição focado em emagrecimento para:
+            Nome: ${dados.nome}
+            Idade: ${dados.idade} anos
+            Gênero: ${dados.genero}
+            Peso Atual: ${dados.peso}kg
+            Meta de Peso: ${dados.meta}kg
+            
+            Formate a resposta com títulos claros (Café da manhã, Almoço, Lanche e Jantar) e dê 3 dicas de ouro para manter a constância.`;
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile", // Modelo potente para melhores dietas
+                        messages: [
+                            { 
+                                role: "system", 
+                                content: "Você é um nutricionista digital de alta performance que fala português do Brasil." 
+                            },
+                            { 
+                                role: "user", 
+                                content: prompt 
+                            }
+                        ],
+                        temperature: 0.6
+                    })
+                });
+
+                if (!response.ok) throw new Error("Falha na API");
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+
+                // Renderização do resultado
+                resultArea.innerHTML = `
+                    <div class="ai-response">
+                        <h3>Plano de ${dados.nome}</h3>
+                        ${content.replace(/\n/g, '<br>')}
+                    </div>
+                    <button onclick="location.reload()" style="margin-top:20px; background: transparent; border: 1px solid var(--primary); color: var(--primary); font-size: 0.8rem;">Novo Cálculo</button>
+                `;
+
+            } catch (error) {
+                resultArea.innerHTML = `<div style="color: #ff4b2b">Erro: Não foi possível conectar ao núcleo da IA. Verifique sua chave API.</div>`;
+                console.error("Erro na requisição:", error);
+            }
+        }
+    </script>
+</body>
+</html>
